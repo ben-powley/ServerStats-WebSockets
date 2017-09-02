@@ -17,16 +17,24 @@ io.on('connection', socket => {
   console.log('User Connected')
 
   socket.on('disconnect', () => {
-    clearInterval(getCPUStats)
+    clearInterval(getCPUStat)
     console.log('User Disconnected')
   })
   
-  let getCPUStatus = setInterval(() => {
+  let getCPUStat = setInterval(() => {
     os.cpuUsage(v => {
       let percentage = (Math.floor(v * 100))
 
-      io.emit('cpu-data', percentage)
-      console.log(`Emitting data // CPU USAGE: ${percentage}%`, v)
+      let data = {
+        platform: os.platform(),
+        cpu: percentage,
+        freeMem: os.freemem(),
+        totalMem: os.totalmem(),
+        uptime: os.sysUptime()
+      };
+
+      io.emit('data', data)
+      console.log(`Emitting data // ${data}%`)
     })
   }, 1000);
 })

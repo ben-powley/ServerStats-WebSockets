@@ -11,7 +11,11 @@
   <div id="app">
     <h2>BoxStatus</h2>
     <hr>
+    <h3>Platform - {{platform}}</h3>
     <h3>CPU Usage - {{cpuUsage}}%</h3>
+    <h3>Free Memory - {{freeMem}}</h3>
+    <h3>Total Memory - {{totalMem}}</h3>
+    <h3>Uptime - {{formattedDate}}</h3>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
@@ -22,13 +26,35 @@
     var vm = new Vue({
       el: '#app',
       data: {
-        cpuUsage: 0
+        platform: '',
+        cpuUsage: 0,
+        freeMem: 0,
+        totalMem: 0,
+        uptime: 0,
+        formattedDate: ''
       },
       created: function() {
-        socket.on('cpu-data', data => {
-          console.log(data)
-          this.cpuUsage = data
+        socket.emit('hello');
+
+        socket.on('data', data => {
+          this.platform = data.platform
+          this.cpuUsage = data.cpu
+          this.freeMem = data.freeMem
+          this.totalMem = data.totalMem
+          this.uptime = data.uptime
+
+          this.getSeconds(this.uptime)
         })
+      },
+      methods: {
+        getSeconds: function(seconds) {
+          let numdays = Math.floor(seconds / 86400)
+          let numhours = Math.floor((seconds % 86400) / 3600)
+          let numminutes = Math.floor(((seconds % 86400) % 3600) / 60)
+          let numseconds = ((seconds % 86400) % 3600) % 60
+
+          this.formattedDate = numdays + " days " + numhours + " hours " + numminutes + " minutes " + numseconds + " seconds"
+        }
       }
     })
   </script>
