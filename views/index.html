@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>BoxStatus</title>
+</head>
+<body>
+
+  <div id="app">
+    <h2>BoxStatus</h2>
+    <hr>
+    <h3>CPU Usage - {{cpuUsage}}%</h3>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+  <script>
+    var socket = io()
+
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        cpuUsage: 0
+      },
+      created: function() {
+        socket.on('cpu-data', data => {
+          console.log(data)
+          this.cpuUsage = data
+        })
+      }
+    })
+  </script>
+  
+</body>
+</html>
